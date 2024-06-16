@@ -11,6 +11,7 @@ export async function run(): Promise<void> {
   const waitForScan: boolean = core.getBooleanInput("wait");
   const content: GitRollResult = await startScan(username, waitForScan);
   core.info(`Results: ${JSON.stringify(content)}`);
+  await Promise.resolve();
 }
 
 /**

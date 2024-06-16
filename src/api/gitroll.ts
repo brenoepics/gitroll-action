@@ -47,7 +47,7 @@ export async function getScanResults(
   scan: userScan,
   username: string
 ): Promise<string | undefined> {
-  const browser: Browser = await puppeteer.launch();
+  const browser: Browser = await puppeteer.launch({ headless: true });
   const page: Page = await browser.newPage();
   const url: string = `${GitRoll.SCAN_URL}?id=${scan.id}&user=${username}&pid=${scan.profileId}&_rsc=5cmev`;
   await page.goto(url);
