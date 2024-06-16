@@ -1,5 +1,5 @@
-describe('index.ts tests', () => {
-    it('should pass', () => {
-        expect(true).toBe(true);
-    });
+describe("index.ts tests", () => {
+  it("should pass", () => {
+    expect(true).toBe(true);
+  });
 });

@@ -1,16 +1,19 @@
-name: "typescript action template"
-description: "Example GitHub Action written in TypeScript"
+name: "GitRoll Scan Action"
+description:
+  "A GitHub Action that requests a GitRoll scan on a specified GitHub user's
+  profile"
 branding:
-  icon: "book-open"
+  icon: "activity"
   color: "white"
 inputs:
-  who-to-greet: # id of input
-    description: "Who to greet"
+  username: # id of input
+    description: "The GitHub username to scan"
     required: true
-    default: "World"
-outputs:
-  message: # id of output
-    description: "The greeting"
+    default: ${{ github.repository_owner }}
+  wait: # id of input
+    description: "Whether to wait for the scan to complete"
+    required: false
+    default: "true"
 runs:
   using: "node20"
   main: "dist/index.js"

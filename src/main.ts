@@ -1,20 +1,37 @@
 import * as core from "@actions/core";
+import { runGitRoll } from "./api/gitroll";
+import { GitRollResult, UNKNOWN_RESULT } from "./api/types";
 
 /**
  * The main function for the action.
  * @returns {void} Resolves when the action is complete.
  */
-export function run(): void {
+export async function run(): Promise<void> {
+  const username: string = core.getInput("username");
+  const waitForScan: boolean = core.getBooleanInput("wait");
+  const content: GitRollResult = await startScan(username, waitForScan);
+  core.info(`Results: ${JSON.stringify(content)}`);
+}
+
+/**
+ * Start a scan for a user.
+ * @param username The GitHub username to scan.
+ * @param waitForScan Whether to wait for the scan to complete.
+ * @returns {Promise<GitRollResult>} The results of the scan.
+ */
+async function startScan(
+  username: string,
+  waitForScan: boolean
+): Promise<GitRollResult> {
+  let content: GitRollResult = UNKNOWN_RESULT;
   try {
-    const who: string = core.getInput("who-to-greet");
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Greeting ${who}... at ${new Date().toTimeString()}`);
-
-    // Set outputs for other workflow steps to use
-    core.setOutput("message", `Hello, ${who}!`);
-  } catch (error) {
-    // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message);
+    core.info(`Scanning ${username}...`);
+    content = await runGitRoll(username, waitForScan);
+  } catch (e) {
+    if (e instanceof Error && e.message === "Failed to get profile") {
+      core.setFailed(e.message);
+    }
+    core.error(e as string);
   }
+  return content;
 }

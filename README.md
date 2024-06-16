@@ -1,18 +1,14 @@
-# GitHub Action Template
+# GitRoll Scanning Action
 
-> [!NOTE]
-> Docs: [docs.github.com](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action)
-
-This repository contains a template for creating a GitHub Action using
-TypeScript. It includes a set of workflows that automate the process of testing,
-building, and checking the code.
+This repository contains a GitHub Action that requests a GitRoll scan for a given GitHub user.
 
 ## Action Details
 
 The main entry point for the action is `src/index.ts`, which imports and runs
 the `run` function from `src/main.ts`. This function retrieves an input named
-"who-to-greet" and then sets an output named hello with the value "Hello,
-<who-to-greet>!".
+"username" and "wait" from the action's inputs, and then calls the `requestScan` function from `src/gitroll.ts` with the
+given username. The `requestScan` function sends a POST request to the GitRoll API to request a scan for the given
+username. The function returns a promise that resolves when the scan is complete.
 
 ## Development
 
@@ -24,6 +20,35 @@ the package manager.
 
 ## Usage
 
+<details>
+<summary>Using in your readme</summary>
+
+To use this action in your repository, you can create a workflow file in the
+`.github/workflows` directory.
+For example, you can create a file named
+`scan.yml` with the following content:
+
+```yaml
+name: Scan
+
+on:
+  cron:
+    - '0 0 * * *'
+
+jobs:
+    scan:
+        runs-on: ubuntu-latest
+        steps:
+        - name: GitRoll Scan
+            uses: brenoepics/gitroll-action@v1
+```
+
+This workflow will run every day at midnight and request a scan for the `brenoepics` user.
+</details>
+
+<details>
+<summary>Using in a workflow</summary>
+
 To use this action in a workflow, you can reference it with the `uses` keyword
 and the path to the repository. You can also specify inputs with the `with`
 keyword. For example:
@@ -31,88 +56,17 @@ keyword. For example:
 ```yaml
 steps:
   - name: Example Step
-    uses: ./ # Uses an action in the root directory, if you push this repository to GitHub, you can use the following: uses: <username>/typescript-action-template@v1
+    uses: brenoepics/gitroll-action@v1
     with:
-      who-to-greet: "Mona the Octocat"
+        username: 'brenoepics'
+        wait: 'true'
 ```
 
-This will run the action with the input `who-to-greet` set to "Mona the Octocat"
-
-## Adding Inputs and Outputs
-
-> [!NOTE]
-> Docs: [docs.github.com](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions)
-
-To add inputs and outputs to your GitHub Action, you need to define them in the
-`action.yml` file. Inputs are defined under the `inputs` field and outputs under
-the `outputs` field. Each input or output has a unique ID, a description, and
-other optional properties. For example, an input could be defined as follows:
-
-```yaml
-inputs:
-  my-input:
-    description: "Description of the input"
-    required: true
-    default: "Default value"
-```
-
-And an output could be defined as follows:
-
-```yaml
-outputs:
-  my-output:
-    description: "Description of the output"
-```
-
-In your TypeScript code, you can use the `core.getInput` function from the
-`@actions/core` package to retrieve the value of an input, and the
-`core.setOutput` function to set the value of an output.
-
-## Running the Action Locally
-
-> [!TIP] 
-> If you don't want to install `act` on your environment, you can use GitHub Codespaces to run the action.
-
-### Nektos/act
-
-> [!NOTE]
-> Docs: [Nektos](https://nektosact.com/introduction.html)
-
-Install [Nektos/act](https://github.com/nektos/act) and run the following
-command:
-
-```bash
-act push -W .github/workflows/ci.yml
-```
-
-## Workflows
-
-There are several workflows defined in the `.github/workflows` directory:
-
-- `ci.yml`: This workflow runs on every push or pull request to the `main`
-  branch. It checks out the code, installs dependencies using `pnpm`, checks the
-  code formatting, lints the code, runs tests, and then runs the action with a
-  greeting.
-
-- `check-dist.yml`: This workflow also runs on every push or pull request to the
-  `main` branch. It checks out the code, installs dependencies, builds the
-  `dist/` directory, and then checks if the `dist/` directory matches the
-  expected output. If it doesn't, the workflow fails and uploads the expected
-  `dist/` directory as a workflow artifact.
-
-- `codeql-analysis.yml`: This workflow runs on every push or pull request to the
-  `main` branch, as well as on a schedule. It checks out the code, initializes
-  CodeQL with the TypeScript language, auto builds the code, and then performs a
-  CodeQL analysis.
-
-## Dependencies
-
-The action uses the `@actions/core` and `@actions/github` packages as
-dependencies. The `@actions/core` package provides functions for getting inputs
-and setting outputs, among other things. The `@actions/github` package provides
-GitHub-related functionality.
+This will request a scan for the `brenoepics` user and wait for the scan to complete.
+</details>
 
 ## License
 
-This project is licensed under Apache-2.0. See the [LICENSE](LICENSE) file for
+This project is licensed under MIT License.
+See the [LICENSE](LICENSE) file for
 details.
