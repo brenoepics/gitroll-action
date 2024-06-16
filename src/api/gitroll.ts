@@ -12,7 +12,7 @@ import {
 } from "./types";
 
 const REGEX_META_TAG: RegExp = /<meta property="og:image" content="(.*?)">/;
-const WAIT_SCAN_TIMEOUT: number = 60 * 1000; // 60 seconds
+const WAIT_SCAN_TIMEOUT: number = 100 * 1000; // 100 seconds
 
 /**
  *
