@@ -39,14 +39,11 @@ on:
   schedule:
     - cron: "30 0 * * *"
   workflow_dispatch:
-  push:
 
 jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - name: browser install
-        run: npx puppeteer browsers install chrome
       - name: GitRoll Scan
         uses: brenoepics/gitroll-action@v0.1.0
 ```
@@ -61,6 +58,11 @@ you can also specify the username with the `username` input.
           username: 'brenoepics'
 ```
 
+Result:
+
+`<a href="https://gitroll.io/profile/<gitroll-id>" target="_blank"><img src="https://gitroll.io/api/badges/profiles/v1/<gitroll-id>" alt="GitRoll Profile Badge"/></a>`
+
+<a href="https://gitroll.io/profile/udhZiC3HdZ5Sd0oAH3pQ7wAGhACi1" target="_blank"><img src="https://gitroll.io/api/badges/profiles/v1/udhZiC3HdZ5Sd0oAH3pQ7wAGhACi1" alt="GitRoll Profile Badge"/></a>
 </details>
 
 ## License
