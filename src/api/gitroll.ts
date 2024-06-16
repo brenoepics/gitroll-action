@@ -116,19 +116,13 @@ export function parseUrlContents(url: string): GitRollResult {
  */
 export async function getGitRollResult(pId: string): Promise<boolean> {
   try {
-    const response: axios.AxiosResponse = await axios.get(
-      `${GitRoll.SCAN_RESULTS}${pId}`
-    );
-    if (response.headers["content-type"] !== "image/png") {
-      return false;
-    }
+    await axios.get(`${GitRoll.SCAN_RESULTS}${pId}`);
   } catch (reason) {
     const err: string = handleError(reason);
     if (err === "User not found or has no scan-able repositories") {
       core.error(err);
-      throw new Error(err);
+      return false;
     }
-    return false;
   }
   return true;
 }
@@ -172,27 +166,20 @@ export async function runGitRoll(
  * @param username The GitHub username scanned.
  */
 async function getResults(toScan: userScan, username: string) {
-  async function retry(e: unknown, attempts: number) {
-    if (attempts > 1) {
-      core.error(e as string);
+  async function retry() {
+    // ignore the error if the user has no scan-able repositories
+    const success: boolean = await getGitRollResult(toScan.profileId);
+    if (!success) {
       return undefined;
     }
 
-    // ignore the error if the user has no scan-able repositories
-    const success: boolean = await getGitRollResult(toScan.profileId).catch(
-      () => false
-    );
-    if (success) {
-      try {
-        return await getScanResults(toScan, username);
-      } catch (e) {
-        core.setFailed(handleError(e));
-      }
-    }
-    return undefined;
+    return await getScanResults(toScan, username);
   }
 
-  return await getScanResults(toScan, username).catch(async (e: unknown) => {
-    return await retry(e, 1);
+  return await getScanResults(toScan, username).catch(async () => {
+    return await retry().catch((e: unknown) => {
+      core.setFailed(handleError(e));
+      return undefined;
+    });
   });
 }
