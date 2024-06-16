@@ -116,11 +116,16 @@ export function parseUrlContents(url: string): GitRollResult {
  */
 export async function getGitRollResult(pId: string): Promise<boolean> {
   try {
-    await axios.get(`${GitRoll.SCAN_RESULTS}${pId}`);
+    const response: axios.AxiosResponse = await axios.get(
+      `${GitRoll.SCAN_RESULTS}${pId}`
+    );
+    if (response.headers["content-type"] !== "image/png") {
+      return false;
+    }
   } catch (reason) {
     const err: string = handleError(reason);
-    core.error(err);
     if (err === "User not found or has no scan-able repositories") {
+      core.error(err);
       throw new Error(err);
     }
     return false;
@@ -175,9 +180,9 @@ async function getResults(toScan: userScan, username: string) {
 
     // ignore the error if the user has no scan-able repositories
     const success: boolean = await getGitRollResult(toScan.profileId).catch(
-      () => true
+      () => false
     );
-    if (!success) {
+    if (success) {
       try {
         return await getScanResults(toScan, username);
       } catch (e) {

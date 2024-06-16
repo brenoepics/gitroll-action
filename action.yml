@@ -13,7 +13,7 @@ inputs:
   wait: # id of input
     description: "Whether to wait for the scan to complete"
     required: false
-    default: "true"
+    default: "false"
 runs:
   using: "node20"
   main: "dist/index.js"

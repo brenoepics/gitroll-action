@@ -28,10 +28,9 @@ async function startScan(
     core.info(`Scanning ${username}...`);
     content = await runGitRoll(username, waitForScan);
   } catch (e) {
-    if (e instanceof Error && e.message === "Failed to get profile") {
-      core.setFailed(e.message);
-    }
-    core.error(e as string);
+    core.setFailed(e as string);
   }
   return content;
 }
+
+void run();
