@@ -1,5 +1,8 @@
 # GitRoll Scanning Action
 
+> [!IMPORTANT]
+> The action mode `wait` still in development.
+
 This repository contains a GitHub Action that requests a GitRoll scan for a given GitHub user.
 
 ## Action Details
@@ -29,40 +32,35 @@ For example, you can create a file named
 `scan.yml` with the following content:
 
 ```yaml
+
 name: Scan
 
 on:
-  cron:
-    - '0 0 * * *'
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+  push:
 
 jobs:
-    scan:
-        runs-on: ubuntu-latest
-        steps:
-        - name: GitRoll Scan
-            uses: brenoepics/gitroll-action@v1
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: browser install
+        run: npx puppeteer browsers install chrome
+      - name: GitRoll Scan
+        uses: brenoepics/gitroll-action@v0.1.0
 ```
 
-This workflow will run every day at midnight and request a scan for the `brenoepics` user.
-</details>
-
-<details>
-<summary>Using in a workflow</summary>
-
-To use this action in a workflow, you can reference it with the `uses` keyword
-and the path to the repository. You can also specify inputs with the `with`
-keyword. For example:
+This workflow will run every day at midnight and request a scan for the repository owner username,
+you can also specify the username with the `username` input.
 
 ```yaml
-steps:
-  - name: Example Step
-    uses: brenoepics/gitroll-action@v1
-    with:
-        username: 'brenoepics'
-        wait: 'true'
+      - name: GitRoll Scan
+        uses: brenoepics/gitroll-action@v0.1.0
+        with:
+          username: 'brenoepics'
 ```
 
-This will request a scan for the `brenoepics` user and wait for the scan to complete.
 </details>
 
 ## License
