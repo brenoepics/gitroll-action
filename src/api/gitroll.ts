@@ -52,8 +52,8 @@ export async function getScanResults(
   const url: string = `${GitRoll.SCAN_URL}?id=${scan.id}&user=${username}&pid=${scan.profileId}&_rsc=5cmev`;
   await page.goto(url);
   await page.waitForNavigation({ timeout: WAIT_SCAN_TIMEOUT });
-  return await page.content().then(content => {
-    void browser.close();
+  return await page.content().then(async content => {
+    await browser.close();
     return REGEX_META_TAG.exec(content)?.[1];
   });
 }
