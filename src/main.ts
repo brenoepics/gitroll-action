@@ -32,5 +32,3 @@ async function startScan(
   }
   return content;
 }
-
-void run();
